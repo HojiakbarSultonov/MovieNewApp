@@ -1,12 +1,18 @@
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import { Header } from 'src/components'
+import { Header, Hero } from 'src/components'
+import { IMovie } from 'src/interfaces/app.interface'
+import { API_REQUEST } from 'src/services/Api.service'
 
 
 
 
 
-export default function Home() {
- 
+export default function Home({ trending }: HomeProps): JSX.Element {
+
+
+
+
   return (
     <div className='relative h-[200vh]'>
       <Head>
@@ -16,9 +22,23 @@ export default function Home() {
         <link rel="icon" href="/logo.svg" />
       </Head>
       <Header />
-      <main>
-
+      <main className='relative pl-4 pb-24 lg:space-y-24 lg:pl-16'>
+        <Hero trending={trending} />
       </main>
     </div>
   )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const trending = await fetch(API_REQUEST.trending).then(res => res.json())
+  return {
+    props: {
+      trending: trending.results,
+    }
+  }
+}
+
+interface HomeProps {
+  trending: IMovie[]
 }

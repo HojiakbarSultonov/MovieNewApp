@@ -1,5 +1,5 @@
-
 import  Header  from './header/Header';
 import Row from './row/Row';
+import Hero from './hero/Hero';
 
-export {Header, Row, }
+export {Header, Row, Hero}
