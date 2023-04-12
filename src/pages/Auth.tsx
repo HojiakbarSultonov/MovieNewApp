@@ -1,24 +1,36 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { TextField } from 'src/components';
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
+import { AuthContext } from 'src/context/Auth.context';
+import { useRouter } from 'next/router';
 
 function Auth() {
     const [auth, setAuth] = useState<"signup" | "signin">('signin');
+    const { error, isLoading, signIn, signUp, user } = useContext(AuthContext);
+    const router = useRouter()
+
+    if(user) router.push('/')
+    if(!isLoading) return <>Loading...</>
+
     const toggleAuth = (state: "signup" | "signin") => {
         setAuth(state)
     }
 
     const onSubmit = (formData: { email: string; password: string }) => {
-        console.log(formData);
+        if (auth === 'signup') {
+            signUp(formData.email, formData.password)
+        }else{
+            signIn(formData.email, formData.password)
+        }
 
     }
 
     const validation = Yup.object({
         email: Yup.string().email('Enter valid email').required('Email is required'),
-        password: Yup.string().min(4, '4 minimum character').required('Password is required'),
+        password: Yup.string().min(6, '6 minimum character').required('Password is required'),
     })
 
     return (
@@ -38,15 +50,13 @@ function Auth() {
                 <Formik initialValues={{ email: '', password: '' }} onSubmit={onSubmit} validationSchema={validation}>
                     <Form className='relative mt-24 space-y-8 rounded bg-black/75 py-10 px-6 md:mt-0 md:max-w-md md:px-10'>
                         <h1 className='text-4xl font-semibold'>{auth === 'signup' ? 'Sign Up' : 'Sign In'}</h1>
+                        {error && <p className="text-red-500 font-semibold text-center">{error}</p>}
                         <div className='space-y-4 '>
                             <TextField name='email' placeholder='Email' type='text' />
                             <TextField name='password' placeholder='Password' type='password' />
                         </div>
-                        {auth === 'signin' ? (
-                            <button type='submit' className="w-full bg-[#E10856] py-3 font-semibold mt-4">Sign In</button>
-                        ) : (
-                            <button type='submit' className=" mt-4 w-full bg-[#E10856] py-3 font-semibold">Sign Up</button>
-                        )}
+                        <button type='submit' disabled={isLoading} className="w-full bg-[#E10856] py-3 font-semibold mt-4">{isLoading ? 'Loading...' : auth === 'signin' ? "Sign In" : "Sign Up"}</button>
+
 
 
                         {auth === 'signin' ?

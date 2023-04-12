@@ -1,12 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { AiOutlineSearch, AiOutlineUser } from 'react-icons/ai'
+import { useState, useEffect, useContext } from 'react'
+import { AiOutlineLogout, AiOutlineSearch, AiOutlineUser } from 'react-icons/ai'
 import { BiBellMinus } from 'react-icons/bi'
+import { AuthContext } from 'src/context/Auth.context'
 
 function Header() {
     const [scrolled, setScrolled] = useState(false)
-
+    const {logout} = useContext(AuthContext)
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 0) {
@@ -39,8 +40,8 @@ function Header() {
                 <BiBellMinus className='h-6 w-6 cursor-pointer' />
                 <Link href={'/Account'}>
                     <AiOutlineUser className='h-6 w-6 cursor-pointer' />
-
                 </Link>
+                <AiOutlineLogout className='h-6 w-6 cursor-pointer' onClick={logout}/>
             </div>
 
         </header>
