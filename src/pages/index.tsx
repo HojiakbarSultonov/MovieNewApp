@@ -5,6 +5,7 @@ import { IMovie } from 'src/interfaces/app.interface'
 import { API_REQUEST } from 'src/services/Api.service'
 import { useContext } from 'react';
 import { AuthContext } from 'src/context/Auth.context'
+import { useInfoStore } from 'src/store'
 
 
 
@@ -12,7 +13,7 @@ import { AuthContext } from 'src/context/Auth.context'
 
 export default function Home({ trending, topRated, tvTopRated, popular, documentary, comedy, family, history }: HomeProps): JSX.Element {
 const {isLoading}=useContext(AuthContext)
-
+const {setModal, modal}=useInfoStore()
 if(isLoading) return <>{null}</>
 
   return (
@@ -24,6 +25,7 @@ if(isLoading) return <>{null}</>
         <link rel="icon" href="/logo.svg" />
       </Head>
       <Header />
+      
       <main className='relative pl-4 pb-24 lg:space-y-24 lg:pl-16'>
         <Hero trending={trending} />
         <section>
