@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import { Header, Hero, Row } from 'src/components'
+import { Header, Hero, Modal, Row } from 'src/components'
 import { IMovie } from 'src/interfaces/app.interface'
 import { API_REQUEST } from 'src/services/Api.service'
 import { useContext } from 'react';
@@ -11,7 +11,7 @@ import { useInfoStore } from 'src/store'
 
 
 
-export default function Home({ trending, topRated, tvTopRated, popular, documentary, comedy, family, history }: HomeProps): JSX.Element {
+export default function Home({ trending, topRated, tvTopRated, popular, documentary, comedy, family }: HomeProps): JSX.Element {
 const {isLoading}=useContext(AuthContext)
 const {setModal, modal}=useInfoStore()
 if(isLoading) return <>{null}</>
@@ -25,7 +25,7 @@ if(isLoading) return <>{null}</>
         <link rel="icon" href="/logo.svg" />
       </Head>
       <Header />
-      
+
       <main className='relative pl-4 pb-24 lg:space-y-24 lg:pl-16'>
         <Hero trending={trending} />
         <section>
@@ -37,20 +37,25 @@ if(isLoading) return <>{null}</>
           <Row title='Family' movies={family.reverse()}/>
         </section>
       </main>
+    {modal && <Modal/>}
     </div>
   )
 }
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const trending = await fetch(API_REQUEST.trending).then(res => res.json())
-  const topRated = await fetch(API_REQUEST.top_rated).then(res => res.json())
-  const tvTopRated = await fetch(API_REQUEST.tv_top_rated).then(res => res.json())
-  const popular = await fetch(API_REQUEST.popular).then(res => res.json())
-  const documentary = await fetch(API_REQUEST.documentary).then(res => res.json())
-  const comedy = await fetch(API_REQUEST.comedy).then(res => res.json())
-  const family = await fetch(API_REQUEST.family).then(res => res.json())
-  const history = await fetch(API_REQUEST.history).then(res => res.json())
+  const [trending, topRated, tvTopRated, popular, documentary, comedy, family]= await Promise.all([
+    fetch(API_REQUEST.trending).then(res => res.json()),
+    fetch(API_REQUEST.top_rated).then(res => res.json()),
+    fetch(API_REQUEST.tv_top_rated).then(res => res.json()),
+    fetch(API_REQUEST.popular).then(res => res.json()),
+    fetch(API_REQUEST.documentary).then(res => res.json()),
+    fetch(API_REQUEST.comedy).then(res => res.json()),
+    fetch(API_REQUEST.family).then(res => res.json())
+  ])
+
+
+
   return {
     props: {
       trending: trending.results,
@@ -60,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       documentary: documentary.results,
       comedy: comedy.results,
       family: family.results,
-      history: history.results,
+ 
 
     }
   }
@@ -74,5 +79,5 @@ interface HomeProps {
   documentary: IMovie[]
   comedy: IMovie[]
   family: IMovie[]
-  history: IMovie[]
+ 
 }

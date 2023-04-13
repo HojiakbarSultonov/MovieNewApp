@@ -3,10 +3,20 @@ import { ThumbnailProps } from './Thumbnail.Props'
 import Image from 'next/image'
 import { image_base } from 'src/helpers/constants'
 import ReactStars from 'react-stars'
+import { useInfoStore } from 'src/store'
 
 function Thumbnail({ movie, isBig = false }: ThumbnailProps) {
+    const { setModal, setCurrentMovie } = useInfoStore()
+
+    const handleCurrentMovie = () => {
+        console.log(movie);
+        
+        setModal(true)
+        setCurrentMovie(movie)
+    }
+
     return (
-        <div className={`relative ${isBig ? 'h-[400px] md:h-[550px] min-w-[350px] md:min-w-[470px]' : 'h-[330px] md:h-[440px] min-w-[200px] md:min-w-[292px]'}   cursor-pointer  transition duration-200 md:hover:scale-110 ease-out `}>
+        <div onClick={handleCurrentMovie} className={`relative ${isBig ? 'h-[400px] md:h-[550px] min-w-[350px] md:min-w-[470px]' : 'h-[330px] md:h-[440px] min-w-[200px] md:min-w-[292px]'}   cursor-pointer  transition duration-200 md:hover:scale-110 ease-out `}>
 
             <Image src={`${image_base}${movie?.backdrop_path || movie?.poster_path}`} alt={"movie.title"} fill className='object-cover rounded-sm md:rounded' />
                 <div className='absolute left-0 bottom-0 right-0 top-0 w-full h-full bg-black/40'></div>
